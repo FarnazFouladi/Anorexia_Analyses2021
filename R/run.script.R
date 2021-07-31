@@ -1,6 +1,8 @@
 rm(list=ls())
 
+set.seed(120)
 
+source("R/load.packages.R")
 source("R/load.data.R")
 source("R/sample.selection.R")
 source("R/plot.R")
@@ -8,39 +10,14 @@ source("R/statistics.R")
 source("R/save.plot.R")
 source("R/run.analysis.R")
 
+taxa<-c("phylum","class","order","family","genus","species")
 
-
-taxa<-c("phylum","order","family","species")
-
+#path to metadata and count tables
 meta.path="data/meta_master.txt"
-taxa.table="data/anorexia2020Sep17_taxaCount_norm_Log10_%s.tsv"
-pathway.table="data/humanN2_pathabundance_cpm.tsv"
+otu.path="data/anorexia2020Sep17_taxaCount_%s.tsv"
+pathway.path="data/humanN2_pathabundance_cpm.tsv"
 
 
 #******************Analyses on all taxonomic levels and pathways****************
-
-taxa="genus"
-
-lapply(taxa,function(x) run.analysis.all(x,taxa.table,meta.path,taxanomy = TRUE))
-run.analysis.all("pathway",pathway.table,meta.path,taxanomy = FALSE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+lapply(taxa,function(t) run.analysis.all(t,otu.path,meta.path,is.taxonomy = TRUE))
+run.analysis.all("pathway",pathway.path,meta.path,is.taxonomy = FALSE)

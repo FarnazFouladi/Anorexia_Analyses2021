@@ -1,5 +1,6 @@
+#Subset data based on group or site
 select.samples<-function(map,otu,site=NULL,disease=NULL){
-  
+
   if(!is.null(site) & !is.null(disease)){
     map_sub<-map[map$Location==site & map$Type %in% disease,]
     otu_sub<-otu[map$Location==site & map$Type %in% disease,]
