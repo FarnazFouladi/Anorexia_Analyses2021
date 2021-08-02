@@ -40,7 +40,7 @@ pco.plot<-function(map,otu,color.group,plot.title,axis1=1,axis2=2,figure.colors,
 
   if(show.ellipses)
     ordiellipse(pcoa, factor(map[,color.group]), kind="se", conf=0.95, lwd=1.5,
-                draw = "lines", col=cols,
+                draw = "lines", col=figure.colors,
                 show.groups=levels(factor(map[,color.group])),
                 label=T,font=2,cex=0.6)
 
@@ -61,9 +61,9 @@ pco.plot<-function(map,otu,color.group,plot.title,axis1=1,axis2=2,figure.colors,
 
 phenotype.boxplot<-function(map,variable,y.title,plot.title,show.legend=FALSE){
 
-
   map.paired<-map %>% group_by(ID,) %>% filter(n()==2) %>% as.data.frame()
 
+  #For some variables that we do not have Healthy controls in denver.
   if(length(unique(map$Location))==1 && unique(map$Location)=="Denver" && !variable %in% c('BMI','shannon_taxonomy','shannon_pathways')){
 
     compare.groups<-t.test(map.paired[,variable][map.paired$Type=="T1"],
@@ -198,6 +198,8 @@ get.scatter.plots<-function(map,otu,variable,variable.name,result.test,FDR=0.1,l
 plot.pvals<-function(pval1,pval2,name1,name2,plot.title){
 
   df<-data.frame(pval1,pval2)
+
+  #Color features that are signigicant in both cohorts
   df_sig <- df[(df$pval1 < log10(0.05) | pval1 > -log10(0.05)) &
                  (df$pval2 < log10(0.05) | pval2 > -log10(0.05)),]
 

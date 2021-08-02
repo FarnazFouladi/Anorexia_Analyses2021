@@ -19,6 +19,12 @@ for (t in c("Genus","Species","Pathway")){
   colnames(result.all)<-c(paste0(colnames(t.test.result),".All"),paste0(colnames(t.test.result.unc),".UNC"),
                           paste0(colnames(t.test.result.denver),".Denver"))
 
+
+
+  result.all.write <- result.all %>% select(-c("taxa.All" ,"taxa.UNC","taxa.Denver")) %>%
+    tibble::rownames_to_column("Taxa")
+  write.table(result.all.write, paste0("Figures/Figure2/",t,"_ttest_resulst.txt"), sep = '\t',quote=FALSE,row.names = FALSE)
+
   pvals<-result.all %>% select(adj.p.vals.HC.T1.All,adj.p.vals.HC.T2.All,adj.p.vals.T1.T2.All,
                                adj.p.vals.HC.T1.UNC,adj.p.vals.HC.T2.UNC,adj.p.vals.T1.T2.UNC,
                                adj.p.vals.HC.T1.Denver,adj.p.vals.HC.T2.Denver,adj.p.vals.T1.T2.Denver)

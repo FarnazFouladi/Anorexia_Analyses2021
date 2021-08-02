@@ -27,7 +27,7 @@ variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)")
                  "trunkFatChange","headFatChange",
                  "totalFatChange","trunkPercentFatChange","headPercentFatChange",
                  "totalPercentFatChange")
-    variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)",
+    variables.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)",
                       "Trunk Fat Change (g)","Head Fat Change (g)", "Total Fat Change (g)",
                       "Trunk Fat Change (percent)","Head Fat Change (percent)", "Total Fat Change (percent)")
 
@@ -41,7 +41,7 @@ variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)")
     variables<-c("BMI")
     variables.names<-c("BMI (kg/m2)")
     variables.change<-c("BMIchange","BMIchangePerDay")
-    variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)")
+    variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2.day)")
   }
 
   if(cohort!="All"){
@@ -68,7 +68,7 @@ otu <- otu[,colSums(otu) != 0]
   plots<-lapply(adjustedp.t.test.names,function(x) get.box.plots(map,otu,combined.tables,FDR=0.1,order.by.column =x,is.taxonomy))
   names(plots)<-adjustedp.t.test.names
   box.plot.file.name<-paste0(paste0("output/",taxaLevel,"/",taxaLevel,"_t-test_boxplot_ordered_",comparisons,"_",cohort,".pdf"))
-  mapply(save.plots,plots,file.name=box.plot.file.name)
+  invisible(mapply(save.plots,plots,file.name=box.plot.file.name))
 
 
 # Baseline Microbiome -----------------------------------------------------
@@ -89,7 +89,7 @@ otu <- otu[,colSums(otu) != 0]
   MLM.result<-perform.MLM.all.vars(map.AN,otu.AN,variables,MLM.file.name,changeInVariable = FALSE)
   MLM.plots<-lapply(1:length(variables),function(x) get.scatter.plots(map.AN,otu.AN,variables[x],
                                                                       variables.names[x],result.test = MLM.result[[x]],legend.show = FALSE))
-  mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf)
+  invisible(mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf))
 
   ## For change in variables including only T1 microbiome
   MLM.file.name<-paste0("output/",taxaLevel,"/",taxaLevel,"_MLM_",variables.change,"_",cohort,".txt")
@@ -97,7 +97,7 @@ otu <- otu[,colSums(otu) != 0]
   MLM.result<-perform.MLM.all.vars(map.AN.baseline,otu.AN.baseline,variables.change,MLM.file.name,changeInVariable = TRUE)
   MLM.plots<-lapply(1:length(variables.change),function(x) get.scatter.plots(map.AN.baseline,otu.AN.baseline,variables.change[x],
                                                                       variables.change.names[x],result.test = MLM.result[[x]],legend.show = FALSE))
-  mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf)
+  invisible(mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf))
 
 
 # Multivariate Analysis ---------------------------------------------------

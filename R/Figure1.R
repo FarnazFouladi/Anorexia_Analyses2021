@@ -170,7 +170,7 @@ tab.summary.cohort <- map %>% group_by(Type,Location) %>%
           Trunc_FatPercent_mean = mean(Trunk..Percent.Fat,na.rm = TRUE), Trunc_FatPercent_sd = sd(Trunk..Percent.Fat, na.rm = TRUE),
           Head_FatPercent_mean = mean(Head..Percent.Fat,na.rm = TRUE), Head_FatPercent_sd = sd(Head..Percent.Fat, na.rm = TRUE),
           Trunc_Fatg_mean = mean(Trunk..Fat.mass..g.,na.rm = TRUE), Trunc_Fatg_sd = sd(Trunk..Fat.mass..g., na.rm = TRUE),
-          Head_Fatg_mean = mean(Head..Fat.mass..g.,na.rm = TRUE), Head_FatPercent_sd = sd(Head..Fat.mass..g., na.rm = TRUE))
+          Head_Fatg_mean = mean(Head..Fat.mass..g.,na.rm = TRUE), Head_Fatg_sd = sd(Head..Fat.mass..g., na.rm = TRUE))
 
 
 write.table(tab.summary.cohort,"Figures/Figure1/table_summary.txt",sep = '\t',row.names = FALSE)
@@ -189,19 +189,8 @@ high_bmi_range <- map %>% filter(Type == 'T2' & BMI >= 18.5) %>% summarise(min(B
 
 
 # Supplemental Figure 1 --------------------------------------------------------
-#Select low BMI patients UNC and do the PCO for taxonomies and metabolic pathways
-unc.low <- map.unc %>% filter(Type == 'T1' & BMI < 15)
-map.unc.low <- map.unc %>% filter(Type == 'HC' | ID %in% unc.low$ID)
-species.unc.low <- species.unc[map.unc.low$SampleID,]
-
-p_low_bmi<-pco.plot(map.unc.low,species.unc.low,color = "Type",
-            plot.title = "Taxonomy-CEED BMI < 15 kg/m2",figure.colors = cols.type,
-            show.legend = TRUE,legend.names = names.type,
-            pdf.name = "Figures/Figure1/Species_PCO1&2_CEED_Low_BMI.pdf")
-
-p_low_bmi1<-pco.plot(map.unc.low,species.unc.low,color = "Type",axis1 = 3, axis2 = 4,
-            plot.title = "Taxonomy-CEED BMI < 15 kg/m2",figure.colors = cols.type,
-            show.legend = TRUE,legend.names = names.type,
-            pdf.name = "Figures/Figure1/Species_PCO3&4_CEED_Low_BMI.pdf")
-
+p4<-pco.plot(map.unc,species.unc,color.group = "Type", axis1=3,axis2 = 4,
+             plot.title = "Taxonomy-CEED",figure.colors = cols.type,
+             show.legend = TRUE,legend.names = names.type,
+             pdf.name = "Figures/Figure1/Supplemental_Figure1.pdf")
 

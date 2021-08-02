@@ -6,9 +6,12 @@ if(!dir.exists(dir.name)){
   dir.create(dir.name,recursive = TRUE,showWarnings = FALSE)
 }
 
+plot.list <- list()
+index <- 1
+
 for(t in c("Genus","Pathway")){
 
-  sitec<- c("UNC","Denver")
+  site<- c("UNC","Denver")
   site.names <- c("CEED","ACUTE")
   df.groups<-lapply(site, function(x) read.table(paste0("output/",t,"/",t,"_t-test_",x,".txt"),sep="\t",header = TRUE,check.names = FALSE,comment.char = "",quote = ""))
   df.groups1<-lapply(df.groups, function(x){
@@ -30,7 +33,16 @@ for(t in c("Genus","Pathway")){
                     df.groups1[[2]]$p.vals.T1.T2.transformed,
                     site.names[1],site.names[2],plot.title = "T1 vs T2")
 
-  pdf(paste0("Figures/Figure3/",t,"_pvalueplots_ttest.pdf"),width = 10,height = 4)
-  grid.arrange(plot1,plot2,plot3,ncol=3,nrow=1)
-  dev.off()
+  plot.list[[index]] <- plot1
+  index <- index + 1
+  plot.list[[index]] <- plot2
+  index <- index + 1
+  plot.list[[index]] <- plot3
+  index <- index + 1
+
+
 }
+
+pdf(paste0("Figures/Figure3/Figure3.pdf"),width = 12,height = 8)
+plot_grid(plotlist = plot.list,nrow = 2, ncol = 3)
+dev.off()

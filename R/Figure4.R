@@ -9,24 +9,35 @@ variables<-c("BMIchangePerDay")
 variable.names<-c("BMI change per day (kg/m2)")
 t="Species"
 
-getMLMResults<-function(cohort,t){
+getMLMResults<-function(cohort,t,transform.pvals = TRUE){
   df<-lapply(variables,function(x) read.table(paste0("output/",t,"/",t,"_MLM_",x,"_",cohort,".txt"),sep="\t",header = TRUE,check.names = FALSE,comment.char = "",quote = ""))
 
   names(df)<-variables
-  df1<-lapply(df,function(x){
-    x$adjusted.p.variable.transformed = getlog10p(x$`adjusted.p-variable`,x$slop)
-    return(x)})
 
+  if(transform.pvals)
+    df<-lapply(df,function(x){
+      x$adjusted.p.variable.transformed = getlog10p(x$`adjusted.p-variable`,x$slop)
+      return(x)})
 
-  df.combined<-data.frame(taxa=rownames(df1[[1]]))
+  df.combined<-data.frame(taxa=rownames(df[[1]]))
   for (i in 1:length(df)){
-    df.combined<-cbind(df.combined,df1[[i]]$adjusted.p.variable.transformed)
+    df.combined<-cbind(df.combined,df[[i]][,ncol(df[[i]])])
   }
   df.combined<-df.combined %>% tibble::column_to_rownames("taxa")
   colnames(df.combined)<-paste0(variable.names,"_",ifelse(cohort == 'All','All',ifelse(cohort == 'UNC','CEED','ACUTE')))
   return(df.combined)
 }
 
+#Get pvalues and write the table
+df.all<-getMLMResults("All",t,transform.pvals = FALSE)
+df.unc<-getMLMResults("UNC",t,transform.pvals = FALSE)
+df.denver<-getMLMResults("Denver",t,transform.pvals = FALSE)
+
+df.final_non_transformed<-cbind(df.all,df.unc,df.denver)
+df.final_non_transformed <- df.final_non_transformed %>% tibble::rownames_to_column("Taxa")
+write.table(df.final_non_transformed, paste0("Figures/Figure4/",t,"_MLM_resulst.txt"), sep = '\t',quote=FALSE,row.names = FALSE)
+
+#Get pvalues, log10 transform, and plot a heatmap
 df.all<-getMLMResults("All",t)
 df.unc<-getMLMResults("UNC",t)
 df.denver<-getMLMResults("Denver",t)

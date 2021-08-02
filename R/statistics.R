@@ -8,7 +8,9 @@ compare.Groups<-function(map,otu,group1,group2,paired=FALSE){
   }
   p.vals<-apply(otu,2,function(x) t.test(x[map$Type==group1],x[map$Type==group2],paired = paired)$p.value)
   t.stat<-apply(otu,2,function(x) t.test(x[map$Type==group1],x[map$Type==group2],paired = paired)$statistic)
+
   adjusted.p<-p.adjust(p.vals,method = "BH")
+
   df<-data.frame(taxa=names(p.vals),t.stat,p.vals,adjusted.p)
   colnames(df)=c("taxa",paste0("t.",group1,".",group2)
                  ,paste0("p.vals.",group1,".",group2),
@@ -26,8 +28,10 @@ MLM<-function(taxa,variable,treatment,cohort,ID,changeInVariable=FALSE){
 
   if(changeInVariable){
 
-    #Cohort is included as the random effect
     if(length(unique(myData$cohort))>2){
+
+      #Cohort is included as the random effect id data in included from both Denver and UNC
+      #If mixed linear model failes for some taxa due to singularity problem, we assign p-value 1 to those taxa.
       fit<-tryCatch({summary(lme(bug ~ variable, random = ~ 1 | cohort, data=myData,na.action = na.omit))},
                     error=function(e){cat("ERROR :",conditionMessage(e), "\n")
                       return(NA)})
@@ -39,6 +43,7 @@ MLM<-function(taxa,variable,treatment,cohort,ID,changeInVariable=FALSE){
       names(pvals)<-c("p-variable","slope")
 
     } else {
+      #Using data only from one site. Cohort is not included as a random effect in the model
       fit <- summary(lm(bug ~ variable,data=myData,na.action = na.omit))
       pvals<-c(fit$coefficients[2,4],fit$coefficients[2,1])
       names(pvals)<-c("p-variable","slope")
@@ -46,9 +51,9 @@ MLM<-function(taxa,variable,treatment,cohort,ID,changeInVariable=FALSE){
 
   } else {
 
-    #Cohort is included as the random effect
     if(length(unique(myData$cohort))>2){
 
+      #Cohort and ID is included as the random effect
       fit<-tryCatch({summary(lme(bug ~ variable * treatment , random = ~ 1 | cohort/ID, data=myData,na.action = na.omit))},
                     error=function(e){cat("ERROR :",conditionMessage(e), "\n")
                       return(NA)})
@@ -61,6 +66,7 @@ MLM<-function(taxa,variable,treatment,cohort,ID,changeInVariable=FALSE){
 
     } else {
 
+      #Only ID is included as a random effect in the model
       fit<-tryCatch({summary(lme(bug ~ variable * treatment , random = ~ 1 | ID, data=myData,na.action = na.omit))},
                     error=function(e){cat("ERROR :",conditionMessage(e), "\n")
                       return(NA)})

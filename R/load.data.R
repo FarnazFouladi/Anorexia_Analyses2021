@@ -1,13 +1,14 @@
 #Load otu tables
-load.data<-function(mapFile,otuFile,minPrevalence = 0.25,normalize=TRUE){
+load.data<-function(mapFile=meta.path,otuFile=file.path,minPrevalence = 0.25,normalize=TRUE){
 
+  #Load meta data and otu table
   map <- read.table(mapFile,sep="\t",header=TRUE,check.names = FALSE,comment.char = "",quote = "")
   otu<-read.table(otuFile,sep="\t",header=TRUE,check.names = FALSE,
                   row.names = 1, comment.char = "",quote = "")
 
   rownames(otu)<-sapply(rownames(otu),function(x){strsplit(x,"_")[[1]][1]})
 
-
+  #Select samples that are found in the metadata
   otu<-otu[map$SampleID,]
 
   #Remove SK samples
@@ -23,6 +24,7 @@ load.data<-function(mapFile,otuFile,minPrevalence = 0.25,normalize=TRUE){
     otu_relab<-sweep(otu,1,rowSums(otu),"/")
     otu<-log10(otu_relab*averageReadPerSample + 1)
   }
+    #Removing taxa that are present in less than 25% of samples.
     otu<-otu[,colMeans(otu>0)>minPrevalence]
 
     list(map,otu)
@@ -31,6 +33,7 @@ load.data<-function(mapFile,otuFile,minPrevalence = 0.25,normalize=TRUE){
 #Load pathway tables
 load.pathways<-function(map.file,pathway.file,minPrevalence = 0.25,unstratified=TRUE){
 
+  #Load metadata and metabolic pathways data
   map <- read.table(map.file,sep="\t",header=TRUE,check.names = FALSE)
   pathway<-read.table(pathway.file,sep="\t",header=TRUE,check.names = FALSE,
                   row.names = 1, comment.char = "",quote = "")
@@ -46,7 +49,7 @@ load.pathways<-function(map.file,pathway.file,minPrevalence = 0.25,unstratified=
   pathway<-pathway[map$Location!="SK",]
   map<-map[map$Location!="SK",]
 
-  #Remove low abundant pathways
+  #Remove pathways that are present in less than 25% of samples.
   pathway<-pathway[,colMeans(pathway>0)>minPrevalence]
 
   list(map,pathway)

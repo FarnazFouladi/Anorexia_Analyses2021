@@ -39,23 +39,21 @@ map.unc<-select.samples(map,genus,site = "UNC")[[1]]
 map.denver<-select.samples(map,genus,site = "Denver")[[1]]
 
 ##Subsetting the tables
+
+#Anorexia patients
 map.AN<-map %>% filter(Type != "HC")
 species.AN<-species %>% filter(map$Type != "HC")
 genus.AN<-genus %>% filter(map$Type != "HC")
+pathway.AN<-pathway %>% filter(map$Type != "HC")
+pathway.AN.baseline <- pathway.AN %>% filter(map.AN$Type == "T1")
 
+
+#Aorexia baseline
 map.AN.baseline <- map.AN %>% filter(Type == "T1")
 species.AN.baseline <- species.AN %>% filter(map.AN$Type == "T1")
 genus.AN.baseline <- genus.AN %>% filter(map.AN$Type == "T1")
 
-pathway.AN<-pathway %>% filter(map$Type != "HC")
-pathway.AN.baseline <- pathway.AN %>% filter(map.AN$Type == "T1")
-
-#TODO: remove ML results
-#write.table(species.AN.baseline,"output/ML/species_baselineMicrobiome_All.txt",sep="\t",quote = FALSE)
-#write.table(map.AN.baseline,"output/ML/map_baselineMicrobiome_All.txt",sep="\t",quote = FALSE)
-#write.table(genus.AN.baseline,"output/ML/genus_baselineMicrobiome_All.txt",sep="\t",quote = FALSE)
-
-
+#Anorexia baseline at UNC and Denver
 map.AN.baseline.UNC <-map.AN.baseline %>% filter(Location=="UNC")
 map.AN.baseline.Denver <-map.AN.baseline %>% filter(Location=="Denver")
 
@@ -79,7 +77,7 @@ unc.meta.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)",
 denver.meta.change<-c("BMIchange","BMIchangePerDay")
 denver.meta.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)")
 
-#Set colors
+#Set colors and names
 cols.type <- brewer.pal(3, "Dark2")
 cols.site <- c("#1F78B4","#F0027F")
 names.type <- c('non-ED','T1','T2')
