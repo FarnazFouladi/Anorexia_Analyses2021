@@ -2,7 +2,7 @@ library(ggplot2)
 library(ggpubr)
 library(ggtree)
 library(RColorBrewer)
-setwd("/Users/shansun/Google\ Drive/farnaz_tree")
+
 path1_1=read.csv(file="significant_pathways.csv",header=T)
 path1=path1_1
 path1[,1]=sapply(strsplit(path1_1[,1],": "),"[[",1)
