@@ -147,8 +147,8 @@ dev.off()
 pdf("Figures/Figure1/Extended_Figure1.pdf",height = 15,width = 15)
 plot_grid(plot.list[[1]],plot.list[[2]],plot.list[[3]],plot.list[[4]],
           plot.list[[5]],plot.list[[6]],plot.list[[7]],plot.list[[8]],
-          shannon,shannon.denver,shannon.unc,NULL,shannon.pathways,
-          shannon.denver.pathways,shannon.unc.pathways,ncol = 4,nrow=4)
+          shannon,shannon.unc,shannon.denver,NULL,shannon.pathways,
+          shannon.unc.pathways,shannon.denver.pathways,ncol = 4,nrow=4)
 dev.off()
 
 # Table 1 -----------------------------------------------------------------
