@@ -11,7 +11,7 @@ R/run.script.R
 R/run.analysis.R
 ```
 
-To generate the figures in the manuscript, run the following codes in order:
+2. To generate the figures in the manuscript, run the following codes in order:
 
 ```{r,eval=F, echo=F}
 R/PrepareDataForFigures.R
