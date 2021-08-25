@@ -1,8 +1,18 @@
 # Figure 4 ----------------------------------------------------------------
 
-dir.name <- 'Figures/Figure4'
-if(!dir.exists(dir.name)){
-  dir.create(dir.name,recursive = TRUE,showWarnings = FALSE)
+source("../resources/PrepareDataForFigures.R")
+
+moduleDir = dirname(getwd())
+pipeRoot = dirname(moduleDir)
+outDir = file.path(moduleDir, "output")
+message("Output directory: ", outDir)
+
+# Upstream modules
+taxaModuleName = dir(pipeRoot, pattern = "TaxonomyAnalysis", full.names = FALSE)
+# pathwayModuleName = dir(pipeRoot, pattern = "PathwayAnalysis", full.names = FALSE)
+
+if(!dir.exists(outDir)){
+  dir.create(outDir,recursive = TRUE,showWarnings = FALSE)
 }
 
 variables<-c("BMIchangePerDay")
@@ -10,7 +20,7 @@ variable.names<-c("BMI change per day (kg/m2)")
 t="Species"
 
 getMLMResults<-function(cohort,t,transform.pvals = TRUE){
-  df<-lapply(variables,function(x) read.table(paste0("output/",t,"/",t,"_MLM_",x,"_",cohort,".txt"),sep="\t",header = TRUE,check.names = FALSE,comment.char = "",quote = ""))
+  df<-lapply(variables,function(x) load.MLM.results(t, paste0("_MLM_",x,"_",cohort,".txt")))
 
   names(df)<-variables
 
@@ -35,7 +45,8 @@ df.denver<-getMLMResults("Denver",t,transform.pvals = FALSE)
 
 df.final_non_transformed<-cbind(df.all,df.unc,df.denver)
 df.final_non_transformed <- df.final_non_transformed %>% tibble::rownames_to_column("Taxa")
-write.table(df.final_non_transformed, paste0("Figures/Figure4/",t,"_MLM_resulst.txt"), sep = '\t',quote=FALSE,row.names = FALSE)
+MLM.table.file=file.path(outDir, paste0(t,"_MLM_resulst.txt"))
+write.table(df.final_non_transformed, MLM.table.file, sep = '\t',quote=FALSE,row.names = FALSE)
 
 #Get pvalues, log10 transform, and plot a heatmap
 df.all<-getMLMResults("All",t)
@@ -69,8 +80,8 @@ p.cols.red=brewer.pal(3,"OrRd")
 pcols.blue=brewer.pal(3,"Blues")
 col_fun = colorRamp2(c(-1.5,-1,-0.5,0.5,1,1.5),c("blue","#9ECAE1","#DEEBF7","#FEE8C8","#FDBB84","red"))
 
-
-pdf(paste0("Figures/Figure4/",t,"_Heatmap_MLM_most_abun.pdf"),height = 15,width = 10)
+heatmap.file=file.path(outDir, paste0(t,"_Heatmap_MLM_most_abun.pdf"))
+pdf(heatmap.file,height = 15,width = 10)
 Heatmap(sig.result1,bottom_annotation = ha,row_names_gp = gpar(fontsize = 10),
         col=col_fun,heatmap_height = unit(25, "cm"),heatmap_width = unit(12, "cm"),
         name = "log10 p-value",cluster_columns = FALSE)
@@ -81,7 +92,9 @@ dev.off()
 t="Species"
 cohort="Denver"
 
-df<-read.table(paste0("output/",t,"/",t,"_MLM_BMIchangePerDay_",cohort,".txt"),sep="\t",header = TRUE,check.names = FALSE,comment.char = "",quote = "")
+mlm.results=file.path(pipeRoot, taxaModuleName, "output", t, paste0(t,"_MLM_BMIchangePerDay_",cohort,".txt"))
+message("Reading file: ", mlm.results)
+df<-read.table(mlm.results, sep="\t",header = TRUE,check.names = FALSE,comment.char = "",quote = "")
 df<-df[df$`adjusted.p-variable`<0.05,]
 otu_sig<-otu.AN.baseline.cohort[,rownames(df)]
 otu_ordered<-otu_sig[,order(colSums(otu_sig),decreasing = TRUE)]
@@ -96,7 +109,8 @@ pvals <- df2$`adjusted.p-variable`
 xlab="BMI change per Day (kg/m2)"
 plots.genus<-lapply(1:6, function(x) scatter.plot(map.AN.baseline.cohort,otu.AN.baseline.cohort,taxa = taxa[x],"BMIchangePerDay",xlab,pvals[x]))
 
-pdf(paste0("Figures/Figure4/",t,"_ScatterPlots_MLM.pdf"),height = 10,width = 7)
+scatter.file=file.path(outDir, paste0(t,"_ScatterPlots_MLM.pdf"))
+pdf(scatter.file,height = 10,width = 7)
 grid.arrange(plots.genus[[1]],plots.genus[[2]],plots.genus[[3]],
              plots.genus[[4]],plots.genus[[5]],plots.genus[[6]],nrow=3,ncol=2)
 dev.off()

@@ -1,11 +1,11 @@
 # Figure1 -----------------------------------------------------------------
 
-dir.name <- 'Figures/Figure1'
+dir.name <- '../output'
 if(!dir.exists(dir.name)){
   dir.create(dir.name,recursive = TRUE,showWarnings = FALSE)
 }
 
-source('R/PrepareDataForFigures.R')
+source("../resources/PrepareDataForFigures.R")
 
 ##########Taxonomy Ordination Plot##########
 
@@ -14,34 +14,34 @@ source('R/PrepareDataForFigures.R')
 p1<-pco.plot(map,species,color.group = "Type",
              plot.title = "Taxonomy-CEED and ACUTE",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO1&2_all.pdf")
+             pdf.name = "../output/Species_PCO1&2_all.pdf")
 
 p2<-pco.plot(map,species,color.group = "Type",axis1=3,axis2 = 4,
              plot.title = "Taxonomy-CEED and ACUTE",figure.colors = cols.type,
              legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO3&4_all.pdf")
+             pdf.name = "../output/Species_PCO3&4_all.pdf")
 
 #CEED
 p3<-pco.plot(map.unc,species.unc,color.group = "Type",
              plot.title = "Taxonomy-CEED",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO1&2_CEED.pdf")
+             pdf.name = "../output/Species_PCO1&2_CEED.pdf")
 
 p4<-pco.plot(map.unc,species.unc,color.group = "Type", axis1=3,axis2 = 4,
              plot.title = "Taxonomy-CEED",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO3&4_CEED.pdf")
+             pdf.name = "../output/Species_PCO3&4_CEED.pdf")
 
 #ACUTE
 p5<-pco.plot(map.denver,species.denver,color.group = "Type",
              plot.title = "Taxonomy-ACUTE",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO1&2_ACUTE.pdf")
+             pdf.name = "../output/Species_PCO1&2_ACUTE.pdf")
 
 p6<-pco.plot(map.denver,species.denver,axis1=3,axis2 = 4,color.group = "Type",
              plot.title = "Taxonomy-ACUTE",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Species_PCO3&4_ACUTE.pdf")
+             pdf.name = "../output/Species_PCO3&4_ACUTE.pdf")
 
 
 ##########Taxonomy Ordination Plot##########
@@ -49,40 +49,40 @@ p6<-pco.plot(map.denver,species.denver,axis1=3,axis2 = 4,color.group = "Type",
 p7<-pco.plot(map,pathway,color.group = "Type",axis1=1,axis2 = 2,
              plot.title = "Metabolic Pathways-CEED and ACUTE",figure.colors= cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/pathway_PCO1&2_all.pdf")
+             pdf.name = "../output/pathway_PCO1&2_all.pdf")
 
 p8<-pco.plot(map,pathway,color.group = "Type",axis1=3,axis2 = 4,
              plot.title = "Metabolic Pathways-CEED and ACUTE",figure.colors= cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/pathway_PCO3&4_all.pdf")
+             pdf.name = "../output/pathway_PCO3&4_all.pdf")
 
 #CEED
 p9<-pco.plot(map.unc,pathway.unc,color.group = "Type",axis1=1,axis2 = 2,
              plot.title = "Metabolic Pathways-CEED",figure.colors= cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/pathway_PCO1&2_CEED.pdf")
+             pdf.name = "../output/pathway_PCO1&2_CEED.pdf")
 
 p10<-pco.plot(map.unc,pathway.unc,color.group = "Type",axis1=3,axis2 = 4,
               plot.title = "Metabolic Pathways-CEED",figure.colors= cols.type,
               show.legend = TRUE,legend.names = names.type,
-              pdf.name = "Figures/Figure1/pathway_PCO3&4_CEED.pdf")
+              pdf.name = "../output/pathway_PCO3&4_CEED.pdf")
 #ACUTE
 p11<-pco.plot(map.denver,pathway.denver,color.group = "Type",
               plot.title = "Metabolic Pathways-ACUTE",figure.colors= cols.type,
               show.legend = TRUE,legend.names = names.type,
-              pdf.name = "Figures/Figure1/pathway_PCO1&2_ACUTE.pdf")
+              pdf.name = "../output/pathway_PCO1&2_ACUTE.pdf")
 
 p12<-pco.plot(map.denver,pathway.denver,color.group = "Type", axis1=3,axis2 = 4,
               plot.title = "Metabolic Pathways-ACUTE",figure.colors= cols.type,
               show.legend = TRUE,legend.names = names.type,
-              pdf.name = "Figures/Figure1/pathway_PCO3&4_ACUTE.pdf")
+              pdf.name = "../output/pathway_PCO3&4_ACUTE.pdf")
 
 ##########Boxplot for phenotypes##########
 #BMI
 p.bmi<-phenotype.boxplot(map,"BMI","BMI (kg/m2)","CEED and ACUTE")
 p.bmi.UNC<-phenotype.boxplot(map.unc,"BMI","BMI (kg/m2)","CEED")
 p.bmi.Denver<-phenotype.boxplot(map.denver,"BMI","BMI (kg/m2)","ACUTE")
-pdf("Figures/Figure1/bmi.pdf",height = 4, width = 4)
+pdf("../output/bmi.pdf",height = 4, width = 4)
 print(p.bmi)
 print(p.bmi.UNC)
 print(p.bmi.Denver)
@@ -127,7 +127,7 @@ for (i in 1:length(unc.meta.variables1)){
   index<-index+1
 }
 
-pdf("Figures/Figure1/phenotype_boxplots.pdf",height = 10,width = 10)
+pdf("../output/phenotype_boxplots.pdf",height = 10,width = 10)
 plot_grid(plotlist=plot.list,ncol = 3,nrow=3)
 dev.off()
 
@@ -140,11 +140,11 @@ shannon.pathways<-phenotype.boxplot(map,"shannon_pathways","Shannon Diversity In
 shannon.unc.pathways<-phenotype.boxplot(map.unc,"shannon_pathways","Shannon Diversity Index","Pathways_CEED")
 shannon.denver.pathways<-phenotype.boxplot(map.denver,"shannon_pathways","Shannon Diversity Index","Pathways_ACUTE")
 
-pdf("Figures/Figure1/alpha_diversity.pdf",height = 7,width = 10)
+pdf("../output/alpha_diversity.pdf",height = 7,width = 10)
 plot_grid(shannon,shannon.unc,shannon.denver,shannon.pathways,shannon.unc.pathways,shannon.denver.pathways,ncol = 3,nrow=2)
 dev.off()
 
-pdf("Figures/Figure1/Extended_Figure1.pdf",height = 15,width = 15)
+pdf("../output/Extended_Figure1.pdf",height = 15,width = 15)
 plot_grid(plot.list[[1]],plot.list[[2]],plot.list[[3]],plot.list[[4]],
           plot.list[[5]],plot.list[[6]],plot.list[[7]],plot.list[[8]],
           shannon,shannon.unc,shannon.denver,NULL,shannon.pathways,
@@ -173,7 +173,7 @@ tab.summary.cohort <- map %>% group_by(Type,Location) %>%
           Head_Fatg_mean = mean(Head..Fat.mass..g.,na.rm = TRUE), Head_Fatg_sd = sd(Head..Fat.mass..g., na.rm = TRUE))
 
 
-write.table(tab.summary.cohort,"Figures/Figure1/table_summary.txt",sep = '\t',row.names = FALSE)
+write.table(tab.summary.cohort,"../output/table_summary.txt",sep = '\t',row.names = FALSE)
 
 #Looking at T1 T2 HC overall
 tab.summary <- map %>% group_by(Type) %>%
@@ -192,5 +192,5 @@ high_bmi_range <- map %>% filter(Type == 'T2' & BMI >= 18.5) %>% summarise(min(B
 p4<-pco.plot(map.unc,species.unc,color.group = "Type", axis1=3,axis2 = 4,
              plot.title = "Taxonomy-CEED",figure.colors = cols.type,
              show.legend = TRUE,legend.names = names.type,
-             pdf.name = "Figures/Figure1/Supplemental_Figure1.pdf")
+             pdf.name = "../output/Supplemental_Figure1.pdf")
 

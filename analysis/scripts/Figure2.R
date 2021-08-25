@@ -1,8 +1,18 @@
 # Figure 2 ----------------------------------------------------------------
 
-dir.name <- 'Figures/Figure2'
-if(!dir.exists(dir.name)){
-  dir.create(dir.name,recursive = TRUE,showWarnings = FALSE)
+source("../resources/PrepareDataForFigures.R")
+
+moduleDir = dirname(getwd())
+pipeRoot = dirname(moduleDir)
+outDir = file.path(moduleDir, "output")
+message("Output directory: ", outDir)
+
+# Upstream modules
+# taxaModuleName = dir(pipeRoot, pattern = "TaxonomyAnalysis", full.names = FALSE)
+# pathwayModuleName = dir(pipeRoot, pattern = "PathwayAnalysis", full.names = FALSE)
+
+if(!dir.exists(outDir)){
+  dir.create(outDir,recursive = TRUE,showWarnings = FALSE)
 }
 
 ##########Heatmaps##########
@@ -11,9 +21,9 @@ level = 2
 
 for (t in c("Genus","Species","Pathway")){
 
-  t.test.result<-read.table(paste0("output/",t,"/",t,"_t-test_All.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
-  t.test.result.unc<-read.table(paste0("output/",t,"/",t,"_t-test_UNC.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
-  t.test.result.denver<-read.table(paste0("output/",t,"/",t,"_t-test_Denver.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
+  t.test.result = load.ttest.results(t, "_t-test_All.txt")
+  t.test.result.unc = load.ttest.results(t, "_t-test_UNC.txt")
+  t.test.result.denver = load.ttest.results(t, "_t-test_Denver.txt")
 
   result.all<-cbind(t.test.result,t.test.result.unc,t.test.result.denver)
   colnames(result.all)<-c(paste0(colnames(t.test.result),".All"),paste0(colnames(t.test.result.unc),".UNC"),
@@ -23,7 +33,9 @@ for (t in c("Genus","Species","Pathway")){
 
   result.all.write <- result.all %>% select(-c("taxa.All" ,"taxa.UNC","taxa.Denver")) %>%
     tibble::rownames_to_column("Taxa")
-  write.table(result.all.write, paste0("Figures/Figure2/",t,"_ttest_resulst.txt"), sep = '\t',quote=FALSE,row.names = FALSE)
+  out.file = file.path(outDir, paste0(t,"_ttest_results.txt"))
+  message("Saving file: ", out.file)
+  write.table(result.all.write, out.file, sep = '\t',quote=FALSE,row.names = FALSE)
 
   pvals<-result.all %>% select(adj.p.vals.HC.T1.All,adj.p.vals.HC.T2.All,adj.p.vals.T1.T2.All,
                                adj.p.vals.HC.T1.UNC,adj.p.vals.HC.T2.UNC,adj.p.vals.T1.T2.UNC,
@@ -63,7 +75,8 @@ for (t in c("Genus","Species","Pathway")){
 
   #Add annontaion for pathways
   if(t == 'Pathway'){
-    annotated_path<- readxl::read_xlsx('output/Pathway/significant_pathways.xlsx',na = 'NA')
+    file.paths.xlsx=file.path(moduleDir, "resources", "significant_pathways.xlsx")
+    annotated_path<- readxl::read_xlsx(file.paths.xlsx,na = 'NA')
     annotated_path$level1 <- sapply(as.character(annotated_path$Class),function(x) {if (x!='Superpathways') strsplit(x,';')[[1]][1] else return('Superpathways')})
     annotated_path$level2 <- sapply(as.character(annotated_path$Class),function(x) {if (x!='Superpathways') strsplit(x,';')[[1]][2] else return('Superpathways')})
 
@@ -74,7 +87,8 @@ for (t in c("Genus","Species","Pathway")){
     rownames(sig.result1) <- sapply(rownames(sig.result1),function(x){strsplit(x,': ')[[1]][2]})
 
     if(level == 1){
-      pdf(paste0("Figures/Figure2/",t,"_Heatmap_level1.pdf"),height = 12,width = 17)
+      out.file.heatmap1 = file.path(outDir, paste0(t,"_Heatmap_level1.pdf"))
+      pdf(out.file.heatmap1,height = 12,width = 17)
 
       row_ha = rowAnnotation(Pathways = annotated_path_heatmap$level1,
                              col=list(Pathways = c("Biosynthesis" = "#66C2A5",
@@ -82,7 +96,8 @@ for (t in c("Genus","Species","Pathway")){
                                                    "Degradation/Utilization/Assimilation" = "#BC80BD",
                                                    "Superpathways" = "#5d8fd5" )),annotation_name_side = "top")
     } else{
-      pdf(paste0("Figures/Figure2/",t,"_Heatmap_level2.pdf"),height = 12,width = 17)
+      out.file.heatmap2 = file.path(outDir, paste0(t,"_Heatmap_level2.pdf"))
+      pdf(out.file.heatmap2,height = 12,width = 17)
       #level2
       myCols <- c("#b4426b","#d395a5","#de424e","#973a35","#855d55","#e08f71",
                   "#ded43e","#63684b","#cde18a","#b4e445","#74a737","#c8d6bd",
@@ -106,7 +121,8 @@ for (t in c("Genus","Species","Pathway")){
     draw(hm,heatmap_legend_side = "left",annotation_legend_side = "left")
   } else{
 
-    pdf(paste0("Figures/Figure2/",t,"_Heatmap.pdf"),height = 12,width = 17)
+    out.file.heatmap = file.path(outDir, paste0(t,"_Heatmap.pdf"))
+    pdf(out.file.heatmap,height = 12,width = 17)
 
     hm<-Heatmap(sig.result1,col=col_fun,bottom_annotation = ha,
                 row_names_gp = gpar(fontsize = 10),heatmap_height = unit(25, "cm"),
@@ -137,9 +153,9 @@ index <- 1
 
 for (t in c("Species","Pathway")){
 
-  t.test.result<-read.table(paste0("output/",t,"/",t,"_t-test_All.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
-  t.test.result.unc<-read.table(paste0("output/",t,"/",t,"_t-test_UNC.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
-  t.test.result.denver<-read.table(paste0("output/",t,"/",t,"_t-test_Denver.txt"),sep = "\t",header = TRUE,row.names = 1,check.names = FALSE,quote = "")
+  t.test.result = load.ttest.results(t, "_t-test_All.txt")
+  t.test.result.unc = load.ttest.results(t, "_t-test_UNC.txt")
+  t.test.result.denver = load.ttest.results(t, "_t-test_Denver.txt")
 
   if (t == "Species"){
     names <- c("Bifidobacterium adolescentis","Flavonifractor plautii","Collinsella aerofaciens","Faecalibacterium prausnitzii")
@@ -204,15 +220,16 @@ for (t in c("Species","Pathway")){
   }
 }
 
-
-pdf("Figures/Figure2/Extended_Figure2.pdf",height = 13,width = 14)
+file.exFig2 = file.path(outDir, "Extended_Figure2.pdf")
+pdf(file.exFig2,height = 13,width = 14)
 gridExtra::grid.arrange(plots.all[[1]],plots.all[[5]],plots.all[[9]],
                    plots.all[[2]],plots.all[[6]],plots.all[[10]],
                    plots.all[[3]],plots.all[[7]],plots.all[[11]],
                    plots.all[[4]],plots.all[[8]],plots.all[[12]],ncol=3)
 dev.off()
 
-pdf("Figures/Figure2/Extended_Figure3.pdf",height = 13,width = 14)
+file.exFig3 = file.path(outDir, "Extended_Figure3.pdf")
+pdf(file.exFig3,height = 13,width = 14)
 gridExtra::grid.arrange(plots.all[[13]],plots.all[[17]],plots.all[[21]],
                         plots.all[[14]],plots.all[[18]],plots.all[[22]],
                         plots.all[[15]],plots.all[[19]],plots.all[[23]],
