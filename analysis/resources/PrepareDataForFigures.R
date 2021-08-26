@@ -1,22 +1,26 @@
 #Figures for the manuscript
 
-rm(list=ls())
-
 set.seed(120)
 
-source("R/load.packages.R")
-source("R/load.data.R")
-source("R/sample.selection.R")
-source("R/statistics.R")
-source("R/plot.R")
+source("../resources/load.packages.R")
+source("../resources/load.data.R")
+source("../resources/sample.selection.R")
+source("../resources/statistics.R")
+source("../resources/plot.R")
+source("../resources/colors.R")
+
+# Locate data ------------------------------------------------------------
+moduleDir = dirname(getwd())
+pipeRoot = dirname(moduleDir)
+meta.path = file.path(pipeRoot, "meta_master.txt")
+
+taxa.table.order = file.path(pipeRoot, "input","taxaCounts", "anorexia2020Sep17_taxaCount_order.tsv")
+taxa.table.genus = file.path(pipeRoot, "input","taxaCounts", "anorexia2020Sep17_taxaCount_genus.tsv")
+taxa.table.species = file.path(pipeRoot, "input","taxaCounts", "anorexia2020Sep17_taxaCount_species.tsv")
+pathway.table = file.path(pipeRoot, "input","pathway", "humanN2_pathabundance_cpm.tsv")
+
 
 # Prepare data ------------------------------------------------------------
-meta.path="data/meta_master.txt"
-taxa.table.order="data/anorexia2020Sep17_taxaCount_order.tsv"
-taxa.table.genus="data/anorexia2020Sep17_taxaCount_genus.tsv"
-taxa.table.species="data/anorexia2020Sep17_taxaCount_species.tsv"
-pathway.table="data/humanN2_pathabundance_cpm.tsv"
-
 order<-load.data(meta.path,taxa.table.order,normalize = TRUE)[[2]]
 genus<-load.data(meta.path,taxa.table.genus,normalize = TRUE)[[2]]
 map=load.data(meta.path,taxa.table.genus,normalize = TRUE)[[1]]
@@ -48,7 +52,7 @@ pathway.AN<-pathway %>% filter(map$Type != "HC")
 pathway.AN.baseline <- pathway.AN %>% filter(map.AN$Type == "T1")
 
 
-#Aorexia baseline
+#Anorexia baseline
 map.AN.baseline <- map.AN %>% filter(Type == "T1")
 species.AN.baseline <- species.AN %>% filter(map.AN$Type == "T1")
 genus.AN.baseline <- genus.AN %>% filter(map.AN$Type == "T1")
@@ -76,10 +80,4 @@ unc.meta.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)",
 
 denver.meta.change<-c("BMIchange","BMIchangePerDay")
 denver.meta.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)")
-
-#Set colors and names
-cols.type <- brewer.pal(3, "Dark2")
-cols.site <- c("#1F78B4","#F0027F")
-names.type <- c('non-ED','T1','T2')
-names.site <- c("Denver","UNC")
 
