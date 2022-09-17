@@ -1,12 +1,6 @@
 #**********************Run Analysis on a cohort or all data*********************
 run.analysis<-function(map,otu,taxaLevel,cohort,is.taxonomy){
 
-variables=c("BMI")
-variables.names<-c("BMI (kg/m2)")
-
-variables.change=c("BMIchange","BMIchangePerDay")
-variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)")
-
 
 # Split Data --------------------------------------------------------------
 
@@ -17,31 +11,12 @@ variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2)")
     map<-map.unc
     otu<-otu.unc
 
-    variables<-c("BMI","TotalFatPercent","StandardBIA_FatPercent",
-                 "Trunk..Percent.Fat","Head..Percent.Fat",
-                 "Trunk..Fat.mass..g.","Head..Fat.mass..g.","Total..Fat.mass..g.")
-    variables.names<-c("BMI (kg/m2)","Total Fat (percent)","Standard BIA Fat (percent)",
-                      "Trunk Fat (percent)","Head Fat (percent)",
-                      "Trunk Fat Mass (g)","Head Fat Mass (g)","Total Fat Mass (g)")
-    variables.change<-c("BMIchange","BMIchangePerDay",
-                 "trunkFatChange","headFatChange",
-                 "totalFatChange","trunkPercentFatChange","headPercentFatChange",
-                 "totalPercentFatChange")
-    variables.change.names<-c("BMI Change (kg/m2)","BMI Change per Day (kg/m2.day)",
-                      "Trunk Fat Change (g)","Head Fat Change (g)", "Total Fat Change (g)",
-                      "Trunk Fat Change (percent)","Head Fat Change (percent)", "Total Fat Change (percent)")
-
-
   } else if (cohort=="Denver"){
 
     map.denver<-select.samples(map,otu,site = "Denver")[[1]]
     otu.denver<-select.samples(map,otu,site = "Denver")[[2]]
     map<-map.denver
     otu<-otu.denver
-    variables<-c("BMI")
-    variables.names<-c("BMI (kg/m2)")
-    variables.change<-c("BMIchange","BMIchangePerDay")
-    variables.change.names<-c("BMI Change (kg/m2)","BMI change per Day (kg/m2.day)")
   }
 
   if(cohort!="All"){
@@ -70,49 +45,6 @@ otu <- otu[,colSums(otu) != 0]
   box.plot.file.name<-paste0(paste0("output/",taxaLevel,"/",taxaLevel,"_t-test_boxplot_ordered_",comparisons,"_",cohort,".pdf"))
   invisible(mapply(save.plots,plots,file.name=box.plot.file.name))
 
-
-# Baseline Microbiome -----------------------------------------------------
-  map.AN<-map %>% filter(Type != "HC")
-  otu.AN<-otu %>% filter(map$Type != "HC")
-  otu.AN <- otu.AN[, colSums(otu.AN)!=0]
-
-  map.AN.baseline <- map.AN %>% filter(Type == "T1")
-  otu.AN.baseline <- otu.AN %>% filter(map.AN$Type == "T1")
-  otu.AN.baseline <- otu.AN.baseline[, colSums(otu.AN.baseline)!=0]
-
-# Mixed Linear Regression Analyses ----------------------------------------
-
-  ## For variables including T1 and T2 microbiome
-
-  MLM.file.name<-paste0("output/",taxaLevel,"/",taxaLevel,"_MLM_",variables,"_",cohort,".txt")
-  MLM.file.name.pdf<-paste0("output/",taxaLevel,"/",taxaLevel,"_MLM_",variables,"_",cohort,".pdf")
-  MLM.result<-perform.MLM.all.vars(map.AN,otu.AN,variables,MLM.file.name,changeInVariable = FALSE)
-  MLM.plots<-lapply(1:length(variables),function(x) get.scatter.plots(map.AN,otu.AN,variables[x],
-                                                                      variables.names[x],result.test = MLM.result[[x]],legend.show = FALSE))
-  invisible(mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf))
-
-  ## For change in variables including only T1 microbiome
-  MLM.file.name<-paste0("output/",taxaLevel,"/",taxaLevel,"_MLM_",variables.change,"_",cohort,".txt")
-  MLM.file.name.pdf<-paste0("output/",taxaLevel,"/",taxaLevel,"_MLM_",variables.change,"_",cohort,".pdf")
-  MLM.result<-perform.MLM.all.vars(map.AN.baseline,otu.AN.baseline,variables.change,MLM.file.name,changeInVariable = TRUE)
-  MLM.plots<-lapply(1:length(variables.change),function(x) get.scatter.plots(map.AN.baseline,otu.AN.baseline,variables.change[x],
-                                                                      variables.change.names[x],result.test = MLM.result[[x]],legend.show = FALSE))
-  invisible(mapply(save.plots,MLM.plots,file.name=MLM.file.name.pdf))
-
-
-# Multivariate Analysis ---------------------------------------------------
-
-  #For variables
-  adonis.file.name<-paste0("output/",taxaLevel,"/",taxaLevel,"_Adonis_T1T2_",cohort,".txt")
-  adonis.file.name.pdf<-paste0("output/",taxaLevel,"/",taxaLevel,"_Adonis_T1T2_",cohort,".pdf")
-  adonis.result<-perform.adonis.all.vars(otu.AN,map.AN,variables,file.Name = adonis.file.name)
-  adonis.plot<-plot.adonis(adonis.result,variables.names,adonis.file.name.pdf,show.legend = FALSE)
-
-  #For change in variables
-  adonis.file.name<-paste0("output/",taxaLevel,"/",taxaLevel,"_Adonis_T1_",cohort,".txt")
-  adonis.file.name.pdf<-paste0("output/",taxaLevel,"/",taxaLevel,"_Adonis_T1_",cohort,".pdf")
-  adonis.result<-perform.adonis.all.vars(otu.AN.baseline,map.AN.baseline,variables.change,file.Name = adonis.file.name)
-  adonis.plot<-plot.adonis(adonis.result,variables.change.names,adonis.file.name.pdf,show.legend = FALSE)
 }
 
 
