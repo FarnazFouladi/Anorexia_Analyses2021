@@ -220,20 +220,3 @@ plot.pvals<-function(pval1,pval2,name1,name2,plot.title){
   plot
 }
 
-#Create a bar plot showing the effect size from adonis test
-plot.adonis<-function(adonis.result,variable.names,file.name,FDR=0.1,show.legend=TRUE){
-
-  adonis.result<-as.data.frame(adonis.result)
-  adonis.result$variables<-rownames(adonis.result)
-  adonis.result$sig<-ifelse(adonis.result$adjusted.pvalue<FDR,"significant","non-significant")
-  adonis.result$names<-variable.names
-  plot<-ggplot(data=adonis.result,aes(x=R2,y=variable.names))+geom_bar(stat="identity",aes(fill=sig),width = 0.5)+
-    scale_fill_manual(values = c("gray","red"))+labs(y="",x=expression('R'^2))+theme_classic()
-  if(!show.legend)
-    plot<-plot+theme(legend.position = "none")
-  pdf(file.name,width = 6,height = 5)
-  print(plot)
-  dev.off()
-  plot
-}
-
