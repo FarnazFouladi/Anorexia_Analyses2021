@@ -1,6 +1,4 @@
-# Figure 3 ----------------------------------------------------------------
 #Compare p-values between cohorts:
-
 source("../resources/PrepareDataForFigures.R")
 
 moduleDir = dirname(getwd())
@@ -53,7 +51,7 @@ for(t in c("Genus","Pathway")){
 
 }
 
-outFile=file.path(outDir, "Figure3.pdf")
+outFile=file.path(outDir, "Figure4.pdf")
 pdf(outFile,width = 12,height = 8)
 plot_grid(plotlist = plot.list,nrow = 2, ncol = 3)
 dev.off()
