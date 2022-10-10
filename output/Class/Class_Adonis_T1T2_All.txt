@@ -1,2 +1,0 @@
-R2	pvalue	adjusted.pvalue
-BMI	0.00393543719226	0.501	0.501

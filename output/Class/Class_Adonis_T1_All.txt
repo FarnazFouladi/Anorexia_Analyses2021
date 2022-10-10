@@ -1,3 +1,0 @@
-R2	pvalue	adjusted.pvalue
-BMIchange	0.0182780585998883	0.217	0.217
-BMIchangePerDay	0.0319059259537418	0.08	0.16
