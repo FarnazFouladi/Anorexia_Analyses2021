@@ -49,7 +49,7 @@ run.analysis<-function(map,otu,taxaLevel,cohort, outputSubDir, is.taxonomy){
   combined.tables<-cbind(tables[[1]],tables[[2]],tables[[3]])
   combined.tables<-combined.tables[,!duplicated(colnames(combined.tables))]
   t.test.file.name<-file.path(outputSubDir, paste0(taxaLevel,"_t-test_",cohort,".txt"))
-  write.table(combined.tables,t.test.file.name,sep = "\t",quote = FALSE)
+  write.table(combined.tables,t.test.file.name,sep = "\t",quote = FALSE,row.names = F)
 
   adjustedp.t.test.names<-c("adj.p.vals.HC.T1","adj.p.vals.HC.T2","adj.p.vals.T1.T2")
   plots<-lapply(adjustedp.t.test.names,function(x) get.box.plots(map,otu,combined.tables,FDR=0.1,order.by.column =x,is.taxonomy))
