@@ -154,8 +154,10 @@ map$SampleID[is.na(map$BMI)]
 
 tab.summary.cohort <- map %>% group_by(Type,Location) %>%
   summarise(Number = n(),BMI_mean = mean(BMI,na.rm = TRUE),BMI_sd = sd(BMI,na.rm = TRUE),
+          Age_mean = mean(Age,na.rm = TRUE),Age_sd = sd(Age,na.rm = TRUE),
           Weight_mean = mean(Weight.kg.,na.rm = TRUE),Weight_sd = sd(Weight.kg.,na.rm = TRUE),
           missing_BMI = sum(is.na(BMI)),
+          Age_BMI = sum(is.na(Age)),
           missing_Weight = sum(is.na(Weight.kg.)),
           recovery_days_mean = mean(TimeBetweenRecovery, na.rm = TRUE),recovery_days_sd = sd(TimeBetweenRecovery, na.rm = TRUE),
           BMI_change_mean = mean(BMIchange,na.rm = TRUE), BMI_change_sd = sd(BMIchange,na.rm = TRUE),
